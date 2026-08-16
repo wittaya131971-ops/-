@@ -1,254 +1,920 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>เกมตารางธาตุ อะตอม และพันธะเคมี Challenge</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-    body {
-      background-color: #0f172a;
-      color: #f8fafc;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      margin: 0;
-      padding: 20px;
-    }
-    .card {
-      background-color: #1e293b;
-      padding: 30px;
-      border-radius: 16px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-      width: 100%;
-      max-width: 550px;
-      text-align: center;
-    }
-    h1 { color: #38bdf8; margin-top: 0; font-size: 24px; }
-    p { color: #cbd5e1; }
-    
-    .btn {
-      background-color: #3b82f6;
-      color: white;
-      border: none;
-      padding: 14px 20px;
-      margin: 8px 0;
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      width: 100%;
-      transition: all 0.2s;
-    }
-    .btn:hover { background-color: #2563eb; transform: translateY(-2px); }
-    .btn:active { transform: scale(0.98); }
-    
-    .btn-easy { background-color: #22c55e; }
-    .btn-easy:hover { background-color: #16a34a; }
-    .btn-medium { background-color: #eab308; color: #000; }
-    .btn-medium:hover { background-color: #ca8a04; }
-    .btn-hard { background-color: #ef4444; }
-    .btn-hard:hover { background-color: #dc2626; }
-    
-    .timer-container {
-      width: 100%;
-      background-color: #334155;
-      height: 12px;
-      border-radius: 6px;
-      margin: 15px 0 8px 0;
-      overflow: hidden;
-    }
-    .timer-bar {
-      height: 100%;
-      width: 100%;
-      background-color: #38bdf8;
-      transition: width 0.1s linear;
-    }
-    .status-bar {
-      display: flex;
-      justify-content: space-between;
-      color: #94a3b8;
-      font-size: 14px;
-      margin-bottom: 10px;
-    }
-    .choices-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-top: 20px;
-    }
-    .hidden { display: none; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atom Crafter: Subatomic & Bonding Fusion</title>
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --panel-bg: #1e293b;
+            --accent-blue: #38bdf8;
+            --accent-green: #4ade80;
+            --accent-purple: #c084fc;
+            --accent-red: #f87171;
+            --accent-yellow: #facc15;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(15, 23, 42, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-box {
+            background: var(--panel-bg);
+            border: 2px solid var(--accent-blue);
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 10px 30px rgba(56, 189, 248, 0.3);
+        }
+
+        .modal-box input {
+            width: 100%;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            background: #0f172a;
+            color: white;
+            font-size: 1.1rem;
+            text-align: center;
+        }
+
+        .modal-box button {
+            background: var(--accent-blue);
+            color: #000;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .modal-box button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+        }
+
+        .header-bar {
+            width: 100%;
+            max-width: 1000px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        h1 {
+            color: var(--accent-blue);
+            font-size: 1.8rem;
+            text-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+        }
+
+        .player-tag {
+            background: rgba(56, 189, 248, 0.15);
+            border: 1px solid var(--accent-blue);
+            padding: 6px 14px;
+            border-radius: 20px;
+            color: var(--accent-blue);
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tab-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab-btn {
+            background-color: var(--panel-bg);
+            color: var(--text-main);
+            border: 1px solid #334155;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .tab-btn.active, .tab-btn:hover {
+            background-color: var(--accent-blue);
+            color: #000;
+            border-color: var(--accent-blue);
+        }
+
+        .tab-content {
+            display: none;
+            width: 100%;
+            max-width: 1000px;
+            background-color: var(--panel-bg);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            border: 1px solid #334155;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .workbench-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .workbench-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .canvas-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 8px;
+            padding: 15px;
+            position: relative;
+        }
+
+        canvas {
+            background-color: transparent;
+            border-radius: 8px;
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .control-group {
+            background: rgba(15, 23, 42, 0.4);
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: 1px solid #334155;
+        }
+
+        .control-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .btn-row button {
+            background-color: #334155;
+            color: white;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-row button:hover {
+            background-color: var(--accent-blue);
+            color: black;
+        }
+
+        .btn-row input[type="range"] {
+            flex-grow: 1;
+        }
+
+        .info-card {
+            background: #0f172a;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-blue);
+            margin-top: 10px;
+        }
+
+        .info-card h3 {
+            color: var(--accent-blue);
+            margin-bottom: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #334155;
+        }
+
+        th {
+            background-color: rgba(15, 23, 42, 0.8);
+            color: var(--accent-blue);
+        }
+
+        tr:hover {
+            background-color: rgba(51, 65, 85, 0.4);
+        }
+
+        .challenge-box {
+            text-align: center;
+            padding: 10px;
+        }
+
+        .timer-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(248, 113, 113, 0.15);
+            border: 2px solid var(--accent-red);
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--accent-red);
+            margin-bottom: 15px;
+        }
+
+        .target-card {
+            background: rgba(15, 23, 42, 0.8);
+            border: 2px dashed var(--accent-purple);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: inline-block;
+            min-width: 280px;
+        }
+
+        .submit-btn {
+            background-color: var(--accent-green);
+            color: #000;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 15px;
+        }
+
+        .submit-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(74, 222, 128, 0.4);
+        }
+
+        .start-challenge-btn {
+            background-color: var(--accent-blue);
+            color: #000;
+            border: none;
+            padding: 14px 36px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .start-challenge-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.5);
+        }
+    </style>
 </head>
 <body>
 
-  <div class="card">
-    <!-- หน้าเลือกระดับความยาก -->
-    <div id="start-screen">
-      <h1>⚛️ เคมี Challenge: อะตอม & พันธะเคมี</h1>
-      <p>เลือกระดับความยากเพื่อเริ่มเกม:</p>
-      <button class="btn btn-easy" onclick="startGame('easy')">🟢 ง่าย (15 วินาที/ข้อ)</button>
-      <button class="btn btn-medium" onclick="startGame('medium')">🟡 ปานกลาง (10 วินาที/ข้อ)</button>
-      <button class="btn btn-hard" onclick="startGame('hard')">🔴 ยาก (5 วินาที/ข้อ)</button>
+    <!-- MODAL FOR PLAYER NAME -->
+    <div id="nameModal" class="modal-overlay">
+        <div class="modal-box">
+            <h2 style="color: var(--accent-blue); margin-bottom: 10px;">ยินดีต้อนรับสู่ Atom Crafter!</h2>
+            <p style="color: var(--text-muted);">กรุณากรอกชื่อของคุณเพื่อลงทะเบียน Leaderboard</p>
+            <input type="text" id="playerNameInput" placeholder="ใส่ชื่อของคุณที่นี่..." maxlength="15" autofocus>
+            <br>
+            <button onclick="submitPlayerName()">เข้าสู่เกม</button>
+        </div>
     </div>
 
-    <!-- หน้าเล่นเกม -->
-    <div id="game-screen" class="hidden">
-      <div class="status-bar">
-        <span id="score-text">คะแนน: 0</span>
-        <span id="question-count">ข้อที่ 1</span>
-      </div>
-      
-      <div class="timer-container">
-        <div id="timer-bar" class="timer-bar"></div>
-      </div>
-      <div id="timer-text" style="font-weight: bold; color: #38bdf8; margin-bottom: 15px;">⏱️ เหลือเวลา: 0 วินาที</div>
-
-      <h2 id="question-text" style="font-size: 20px; min-height: 50px;">คำถามจะขึ้นตรงนี้</h2>
-      <div id="choices-container" class="choices-grid"></div>
+    <div class="header-bar">
+        <div>
+            <h1>Atom Crafter: Subatomic & Bonding Fusion</h1>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">เกมเรียนรู้ตารางธาตุ โครงสร้างอะตอม และพันธะเคมี</p>
+        </div>
+        <div class="player-tag">
+            <span>👤 ผู้เล่น:</span>
+            <span id="displayPlayerName">นักวิทยาศาสตร์</span>
+            <button onclick="changeName()" style="background:none; border:none; color:var(--text-muted); cursor:pointer; text-decoration:underline; font-size:0.8rem; margin-left:5px;">(เปลี่ยนชื่อ)</button>
+        </div>
     </div>
 
-    <!-- หน้าจบเกม -->
-    <div id="result-screen" class="hidden">
-      <h1>🏆 จบการแข่งขัน!</h1>
-      <p id="final-score" style="font-size: 26px; font-weight: bold; color: #4ade80;"></p>
-      <button class="btn" onclick="resetGame()">🔄 เล่นอีกครั้ง</button>
+    <div class="tab-buttons">
+        <button class="tab-btn active" onclick="switchTab('workbench', event)">Atomic Workbench</button>
+        <button class="tab-btn" onclick="switchTab('bonding', event)">Bonding Lab</button>
+        <button class="tab-btn" onclick="switchTab('challenge', event)">Target Challenge (จับเวลา)</button>
+        <button class="tab-btn" onclick="switchTab('leaderboard', event)">Leaderboard</button>
     </div>
-  </div>
 
-  <script>
-    // รวมคลังคำถามเดิม + เรื่อง โปรตอน/อิเล็กตรอน (p/e) + พันธะเคมี
-    const questionBank = {
-      easy: [
-        // เรื่อง โปรตอน/อิเล็กตรอน & อะตอมพื้นฐาน
-        { question: "อะตอมที่เป็นกลางทางไฟฟ้า มีจำนวนโปรตอน (p) เท่ากับสิ่งใด?", choices: ["อิเล็กตรอน (e)", "นิวตรอน (n)", "เลขมวล (A)", "นิวเคลียส"], answer: "อิเล็กตรอน (e)" },
-        { question: "อนุภาคในอะตอมที่มีประจุไฟฟ้าเป็นบวกคืออะไร?", choices: ["โปรตอน (p)", "อิเล็กตรอน (e)", "นิวตรอน (n)", "โพสิตรอน"], answer: "โปรตอน (p)" },
-        { question: "ธาตุที่มีโปรตอน 1 ตัว และอิเล็กตรอน 1 ตัว คือธาตุใด?", choices: ["H (ไฮโดรเจน)", "He (ฮีเลียม)", "Li (ลิเทียม)", "C (คาร์บอน)"], answer: "H (ไฮโดรเจน)" },
-        // เรื่อง พันธะเคมีพื้นฐาน
-        { question: "พันธะเคมีที่เกิดจากการใช้อิเล็กตรอนร่วมกันเรียกว่าพันธะอะไร?", choices: ["พันธะโคเวเลนต์", "พันธะไอออนิก", "พันธะโลหะ", "พันธะไฮโดรเจน"], answer: "พันธะโคเวเลนต์" },
-        { question: "พันธะที่เกิดจากการส่งผ่านอิเล็กตรอนระหว่าง 'โลหะ + อโลหะ' คือพันธะอะไร?", choices: ["พันธะไอออนิก", "พันธะโคเวเลนต์", "พันธะโลหะ", "พันธะเดี่ยว"], answer: "พันธะไอออนิก" },
-        { question: "สัญลักษณ์เคมีของ 'โซเดียม' คืออะไร?", choices: ["Na", "So", "N", "Sd"], answer: "Na" }
-      ],
-      medium: [
-        // คำนวณ โปรตอน/อิเล็กตรอน และ ไอออน
-        { question: "ไอออน Na⁺ (เลขอะตอม Z = 11) มีจำนวนอิเล็กตรอนกี่ตัว?", choices: ["10 ตัว", "11 ตัว", "12 ตัว", "9 ตัว"], answer: "10 ตัว" },
-        { question: "ไอออน Cl⁻ (เลขอะตอม Z = 17) มีจำนวนอิเล็กตรอนกี่ตัว?", choices: ["18 ตัว", "17 ตัว", "16 ตัว", "19 ตัว"], answer: "18 ตัว" },
-        { question: "ธาตุที่มีเลขอะตอม Z = 6 และเลขมวล A = 14 มีนิวตรอนกี่ตัว?", choices: ["8 ตัว", "6 ตัว", "14 ตัว", "20 ตัว"], answer: "8 ตัว" },
-        // พันธะเคมีระดับปานกลาง
-        { question: "แรงยึดเหนี่ยวระหว่างอะตอมของโลหะด้วยกันเองเรียกว่าอะไร?", choices: ["พันธะโลหะ", "พันธะไอออนิก", "พันธะโคเวเลนต์", "แรงวันเดอร์วาลส์"], answer: "พันธะโลหะ" },
-        { question: "สารประกอบเกลือแกง (NaCl) จัดเป็นพันธะเคมีประเภทใด?", choices: ["พันธะไอออนิก", "พันธะโคเวเลนต์", "พันธะโลหะ", "พันธะไฮโดรเจน"], answer: "พันธะไอออนิก" },
-        { question: "โมเลกุลน้ำ (H₂O) จัดเป็นการรวมกันด้วยพันธะประเภทใด?", choices: ["พันธะโคเวเลนต์", "พันธะไอออนิก", "พันธะโลหะ", "พันธะแก๊ส"], answer: "พันธะโคเวเลนต์" }
-      ],
-      hard: [
-        // คำนวณ p, e, n ซับซ้อน & การจัดเรียง
-        { question: "ไอออน O²⁻ (Z = 8, A = 16) มีจำนวน p, e, n เท่ากับเท่าใด?", choices: ["p=8, e=10, n=8", "p=8, e=8, n=8", "p=8, e=6, n=10", "p=10, e=8, n=8"], answer: "p=8, e=10, n=8" },
-        { question: "การจัดเรียงอิเล็กตรอนของ Ca (Z = 20) คือข้อใด?", choices: ["2, 8, 8, 2", "2, 8, 10", "2, 8, 9, 1", "2, 18, 2"], answer: "2, 8, 8, 2" },
-        { question: "ไอออน Ca²⁺ (Z = 20) มีการจัดเรียงอิเล็กตรอนเหมือนแก๊สเฉื่อยใด?", choices: ["Ar (อาร์กอน)", "Ne (นีออน)", "Kr (คริปทอน)", "He (ฮีเลียม)"], answer: "Ar (อาร์กอน)" },
-        // เจาะลึกพันธะเคมี
-        { question: "ข้อใดคือโมเลกุลที่มี 'พันธะคู่' (Double Bond)?", choices: ["O₂ (ออกซิเจน)", "H₂ (ไฮโดรเจน)", "N₂ (ไนโตรเจน)", "HCl (กรดเกลือ)"], answer: "O₂ (ออกซิเจน)" },
-        { question: "พันธะในโมเลกุลแก๊สไนโตรเจน (N₂) เป็นพันธะชนิดใด?", choices: ["พันธะสาม", "พันธะคู่", "พันธะเดี่ยว", "พันธะไอออนิก"], answer: "พันธะสาม" }
-      ]
-    };
+    <!-- 1. ATOMIC WORKBENCH -->
+    <div id="workbench" class="tab-content active">
+        <div class="workbench-grid">
+            <div class="canvas-container">
+                <canvas id="atomCanvas" width="350" height="350"></canvas>
+            </div>
+            <div class="controls">
+                <div class="control-group">
+                    <div class="control-label">
+                        <span>โปรตอน (Protons): <span id="pVal" style="color: var(--accent-red);">1</span></span>
+                    </div>
+                    <div class="btn-row">
+                        <button onclick="adjP(-1)">-</button>
+                        <input type="range" id="pRange" min="1" max="118" value="1" oninput="setP(this.value)">
+                        <button onclick="adjP(1)">+</button>
+                    </div>
+                </div>
 
-    const timeLimits = { easy: 15, medium: 10, hard: 5 };
+                <div class="control-group">
+                    <div class="control-label">
+                        <span>นิวตรอน (Neutrons): <span id="nVal" style="color: var(--accent-purple);">0</span></span>
+                    </div>
+                    <div class="btn-row">
+                        <button onclick="adjN(-1)">-</button>
+                        <input type="range" id="nRange" min="0" max="180" value="0" oninput="setN(this.value)">
+                        <button onclick="adjN(1)">+</button>
+                    </div>
+                </div>
 
-    let currentQuestions = [];
-    let currentQuestionIndex = 0;
-    let score = 0;
-    let timer = null;
-    let timeLeft = 0;
-    let maxTime = 10;
+                <div class="control-group">
+                    <div class="control-label">
+                        <span>อิเล็กตรอน (Electrons): <span id="eVal" style="color: var(--accent-blue);">1</span></span>
+                    </div>
+                    <div class="btn-row">
+                        <button onclick="adjE(-1)">-</button>
+                        <input type="range" id="eRange" min="0" max="118" value="1" oninput="setE(this.value)">
+                        <button onclick="adjE(1)">+</button>
+                    </div>
+                </div>
 
-    function startGame(difficulty) {
-      currentQuestions = [...questionBank[difficulty]].sort(() => Math.random() - 0.5);
-      maxTime = timeLimits[difficulty];
-      score = 0;
-      currentQuestionIndex = 0;
+                <div class="info-card">
+                    <h3 id="elemName">Hydrogen (H)</h3>
+                    <p><strong>เลขอะตอม:</strong> <span id="elemZ">1</span> | <strong>มวลอะตอม:</strong> <span id="elemMass">1</span></p>
+                    <p><strong>สถานะประจุ:</strong> <span id="elemCharge">เป็นกลาง (0)</span></p>
+                    <p><strong>การจัดเรียงอิเล็กตรอน:</strong> <span id="elemConfig">1</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
 
-      document.getElementById('start-screen').classList.add('hidden');
-      document.getElementById('result-screen').classList.add('hidden');
-      document.getElementById('game-screen').classList.remove('hidden');
+    <!-- 2. CHEMICAL BONDING LAB -->
+    <div id="bonding" class="tab-content">
+        <h2>Chemical Bonding Lab (ห้องทดลองพันธะเคมี)</h2>
+        <p style="color: var(--text-muted); margin-bottom: 15px;">เลือกประเภทพันธะและโมเลกุลสารประกอบเพื่อดูการถ่ายโอนหรือใช้อิเล็กตรอนร่วมกัน</p>
+        
+        <div style="margin-bottom: 20px;">
+            <label><strong>เลือกโมเลกุล: </strong></label>
+            <select id="moleculeSelect" onchange="renderBonding()" style="padding: 8px; border-radius: 6px; background: #0f172a; color: white; border: 1px solid #334155;">
+                <optgroup label="พันธะไอออนิก (Ionic Bond)">
+                    <option value="NaCl">NaCl (Sodium Chloride)</option>
+                    <option value="MgO">MgO (Magnesium Oxide)</option>
+                </optgroup>
+                <optgroup label="พันธะโคเวเลนต์ (Covalent Bond)">
+                    <option value="H2O">H2O (Water)</option>
+                    <option value="CO2">CO2 (Carbon Dioxide)</option>
+                    <option value="O2">O2 (Oxygen Molecule)</option>
+                </optgroup>
+            </select>
+        </div>
 
-      showNextQuestion();
-    }
+        <div class="canvas-container">
+            <canvas id="bondCanvas" width="600" height="300"></canvas>
+        </div>
+        <div class="info-card" id="bondInfo" style="margin-top: 15px;">
+        </div>
+    </div>
 
-    function showNextQuestion() {
-      if (currentQuestionIndex >= currentQuestions.length) {
-        endGame();
-        return;
-      }
+    <!-- 3. TARGET CHALLENGE (TIMED) -->
+    <div id="challenge" class="tab-content">
+        <div class="challenge-box">
+            <h2>Target Challenge Mode (โหมดท้าทายจับเวลา)</h2>
+            <p style="color: var(--text-muted); margin-bottom: 15px;">สร้างอนุภาคตามเป้าหมายให้ถูกต้องก่อนเวลาจะหมดเพื่อทำคะแนนสูงสุด!</p>
+            
+            <div id="challengeStartScreen" style="margin: 30px 0;">
+                <p style="font-size: 1.1rem; margin-bottom: 20px;">คุณจะมีเวลา <strong>45 วินาที</strong> ต่อข้อ เพื่อสังเคราะห์อนุภาคให้ตรงตามเป้าหมาย</p>
+                <button class="start-challenge-btn" onclick="startChallengeGame()">🚀 เริ่มการท้าทาย!</button>
+            </div>
 
-      const q = currentQuestions[currentQuestionIndex];
-      document.getElementById('score-text').innerText = `คะแนน: ${score}`;
-      document.getElementById('question-count').innerText = `ข้อที่ ${currentQuestionIndex + 1}/${currentQuestions.length}`;
-      document.getElementById('question-text').innerText = q.question;
+            <div id="challengeGameArea" style="display: none;">
+                <div class="timer-badge">
+                    <span>⏱️ เวลาที่เหลือ:</span>
+                    <span id="timerVal">45</span>
+                    <span>วินาที</span>
+                </div>
+                <br>
+                <div class="target-card">
+                    <h3>โจทย์เป้าหมาย:</h3>
+                    <h1 id="targetTitle" style="color: var(--accent-green); font-size: 2.2rem; margin: 10px 0;">Carbon-12</h1>
+                    <p>โปรตอน: <span id="targetP" style="color:var(--accent-red); font-weight:bold;">6</span> | นิวตรอน: <span id="targetN" style="color:var(--accent-purple); font-weight:bold;">6</span> | อิเล็กตรอน: <span id="targetE" style="color:var(--accent-blue); font-weight:bold;">6</span></p>
+                </div>
 
-      const choicesContainer = document.getElementById('choices-container');
-      choicesContainer.innerHTML = '';
+                <div class="workbench-grid" style="text-align: left;">
+                    <div class="canvas-container">
+                        <canvas id="challengeCanvas" width="300" height="300"></canvas>
+                    </div>
+                    <div class="controls">
+                        <div class="control-group">
+                            <div class="control-label">
+                                <span>โปรตอน (Protons): <span id="cPVal" style="color: var(--accent-red);">1</span></span>
+                            </div>
+                            <div class="btn-row">
+                                <button onclick="adjCP(-1)">-</button>
+                                <input type="range" id="cPRange" min="1" max="118" value="1" oninput="setCP(this.value)">
+                                <button onclick="adjCP(1)">+</button>
+                            </div>
+                        </div>
 
-      const shuffledChoices = [...q.choices].sort(() => Math.random() - 0.5);
-      shuffledChoices.forEach(choice => {
-        const btn = document.createElement('button');
-        btn.className = 'btn';
-        btn.innerText = choice;
-        btn.onclick = () => selectAnswer(choice);
-        choicesContainer.appendChild(btn);
-      });
+                        <div class="control-group">
+                            <div class="control-label">
+                                <span>นิวตรอน (Neutrons): <span id="cNVal" style="color: var(--accent-purple);">0</span></span>
+                            </div>
+                            <div class="btn-row">
+                                <button onclick="adjCN(-1)">-</button>
+                                <input type="range" id="cNRange" min="0" max="180" value="0" oninput="setCN(this.value)">
+                                <button onclick="adjCN(1)">+</button>
+                            </div>
+                        </div>
 
-      startTimer();
-    }
+                        <div class="control-group">
+                            <div class="control-label">
+                                <span>อิเล็กตรอน (Electrons): <span id="cEVal" style="color: var(--accent-blue);">1</span></span>
+                            </div>
+                            <div class="btn-row">
+                                <button onclick="adjCE(-1)">-</button>
+                                <input type="range" id="cERange" min="0" max="118" value="1" oninput="setCE(this.value)">
+                                <button onclick="adjCE(1)">+</button>
+                            </div>
+                        </div>
 
-    function startTimer() {
-      clearInterval(timer);
-      timeLeft = maxTime;
-      updateTimerUI();
+                        <div style="text-align: center;">
+                            <h3 style="margin-top: 10px;">คะแนนปัจจุบัน: <span id="scoreVal" style="color: var(--accent-yellow); font-size: 1.5rem;">0</span></h3>
+                            <button class="submit-btn" onclick="checkChallenge()">ส่งคำตอบสังเคราะห์</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-      timer = setInterval(() => {
-        timeLeft -= 0.1;
-        updateTimerUI();
+    <!-- 4. LEADERBOARD -->
+    <div id="leaderboard" class="tab-content">
+        <h2>Global Leaderboard (ตารางอันดับ)</h2>
+        <p style="color: var(--text-muted);">อันดับผู้เล่นที่ทำคะแนนการสังเคราะห์ได้สูงสุด</p>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>อันดับ</th>
+                    <th>ชื่อผู้เล่น</th>
+                    <th>คะแนน (Score)</th>
+                    <th>สถานะ</th>
+                </tr>
+            </thead>
+            <tbody id="lbTable">
+            </tbody>
+        </table>
+    </div>
 
-        if (timeLeft <= 0) {
-          clearInterval(timer);
-          nextQuestion();
+    <script>
+        const elementsData = [
+            {z:1, sym:"H", name:"Hydrogen", mass:1}, {z:2, sym:"He", name:"Helium", mass:4},
+            {z:3, sym:"Li", name:"Lithium", mass:7}, {z:4, sym:"Be", name:"Beryllium", mass:9},
+            {z:5, sym:"B", name:"Boron", mass:11}, {z:6, sym:"C", name:"Carbon", mass:12},
+            {z:7, sym:"N", name:"Nitrogen", mass:14}, {z:8, sym:"O", name:"Oxygen", mass:16},
+            {z:9, sym:"F", name:"Fluorine", mass:19}, {z:10, sym:"Ne", name:"Neon", mass:20},
+            {z:11, sym:"Na", name:"Sodium", mass:23}, {z:12, sym:"Mg", name:"Magnesium", mass:24},
+            {z:13, sym:"Al", name:"Aluminium", mass:27}, {z:14, sym:"Si", name:"Silicon", mass:28},
+            {z:15, sym:"P", name:"Phosphorus", mass:31}, {z:16, sym:"S", name:"Sulfur", mass:32},
+            {z:17, sym:"Cl", name:"Chlorine", mass:35}, {z:18, sym:"Ar", name:"Argon", mass:40},
+            {z:19, sym:"K", name:"Potassium", mass:39}, {z:20, sym:"Ca", name:"Calcium", mass:40},
+            {z:26, sym:"Fe", name:"Iron", mass:56}, {z:29, sym:"Cu", name:"Copper", mass:64},
+            {z:47, sym:"Ag", name:"Silver", mass:108}, {z:79, sym:"Au", name:"Gold", mass:197},
+            {z:92, sym:"U", name:"Uranium", mass:238}, {z:118, sym:"Og", name:"Oganesson", mass:294}
+        ];
+
+        let playerName = "Player1";
+        let p = 1, n = 0, e = 1;
+        let cp = 1, cn = 0, ce = 1;
+        let score = 0;
+        let timeLeft = 45;
+        let timerInterval = null;
+        let gameActive = false;
+
+        const targetsPool = [
+            { title: "Hydrogen-1", p: 1, n: 0, e: 1 },
+            { title: "Helium-4", p: 2, n: 2, e: 2 },
+            { title: "Lithium-7", p: 3, n: 4, e: 3 },
+            { title: "Carbon-12", p: 6, n: 6, e: 6 },
+            { title: "Oxygen-16", p: 8, n: 8, e: 8 },
+            { title: "Sodium Ion (Na+)", p: 11, n: 12, e: 10 },
+            { title: "Oxide Ion (O2-)", p: 8, n: 8, e: 10 },
+            { title: "Magnesium Ion (Mg2+)", p: 12, n: 12, e: 10 },
+            { title: "Chlorine-35", p: 17, n: 18, e: 17 },
+            { title: "Neon-20", p: 10, n: 10, e: 10 }
+        ];
+        let currentTargetIndex = 3;
+
+        let defaultLeaderboard = [
+            { name: "AtomMaster", score: 500, status: "Master Chemist" },
+            { name: "ElectronPro", score: 350, status: "Senior Researcher" },
+            { name: "QuantumCraft", score: 200, status: "Lab Technician" }
+        ];
+
+        window.onload = function() {
+            let savedName = localStorage.getItem('atomCrafterPlayer');
+            if(savedName) {
+                playerName = savedName;
+                document.getElementById('displayPlayerName').innerText = playerName;
+                document.getElementById('nameModal').style.display = 'none';
+            } else {
+                document.getElementById('nameModal').style.display = 'flex';
+            }
+            updateLeaderboardUI();
+            updateUI();
+        };
+
+        function submitPlayerName() {
+            let input = document.getElementById('playerNameInput').value.trim();
+            if(input) {
+                playerName = input;
+                localStorage.setItem('atomCrafterPlayer', playerName);
+                document.getElementById('displayPlayerName').innerText = playerName;
+                document.getElementById('nameModal').style.display = 'none';
+            } else {
+                alert("กรุณากรอกชื่อก่อนเริ่มเล่นครับ");
+            }
         }
-      }, 100);
-    }
 
-    function updateTimerUI() {
-      const percentage = (timeLeft / maxTime) * 100;
-      document.getElementById('timer-bar').style.width = `${Math.max(0, percentage)}%`;
-      document.getElementById('timer-text').innerText = `⏱️ เหลือเวลา: ${Math.max(0, Math.ceil(timeLeft))} วินาที`;
-    }
+        function changeName() {
+            document.getElementById('nameModal').style.display = 'flex';
+        }
 
-    function selectAnswer(selectedChoice) {
-      clearInterval(timer);
-      const correctAnswer = currentQuestions[currentQuestionIndex].answer;
-      if (selectedChoice === correctAnswer) {
-        score += 10;
-      }
-      nextQuestion();
-    }
+        function getElementInfo(protons) {
+            let found = elementsData.find(item => item.z === parseInt(protons));
+            if (found) return found;
+            return { z: protons, sym: "E" + protons, name: "Element " + protons, mass: protons * 2 };
+        }
 
-    function nextQuestion() {
-      currentQuestionIndex++;
-      showNextQuestion();
-    }
+        function switchTab(tabId, evt) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            if(evt) evt.currentTarget.classList.add('active');
+            if(tabId === 'bonding') renderBonding();
+            if(tabId === 'challenge') updateChallengeUI();
+            if(tabId === 'leaderboard') updateLeaderboardUI();
+        }
 
-    function endGame() {
-      clearInterval(timer);
-      document.getElementById('game-screen').classList.add('hidden');
-      document.getElementById('result-screen').classList.remove('hidden');
-      document.getElementById('final-score').innerText = `คุณทำได้ ${score} คะแนน!`;
-    }
+        function setP(v) { p = parseInt(v); updateUI(); }
+        function setN(v) { n = parseInt(v); updateUI(); }
+        function setE(v) { e = parseInt(v); updateUI(); }
+        function adjP(v) { p = Math.max(1, Math.min(118, p + v)); updateUI(); }
+        function adjN(v) { n = Math.max(0, Math.min(180, n + v)); updateUI(); }
+        function adjE(v) { e = Math.max(0, Math.min(118, e + v)); updateUI(); }
 
-    function resetGame() {
-      document.getElementById('result-screen').classList.add('hidden');
-      document.getElementById('start-screen').classList.remove('hidden');
-    }
-  </script>
+        function setCP(v) { cp = parseInt(v); updateChallengeUI(); }
+        function setCN(v) { cn = parseInt(v); updateChallengeUI(); }
+        function setCE(v) { ce = parseInt(v); updateChallengeUI(); }
+        function adjCP(v) { cp = Math.max(1, Math.min(118, cp + v)); updateChallengeUI(); }
+        function adjCN(v) { cn = Math.max(0, Math.min(180, cn + v)); updateChallengeUI(); }
+        function adjCE(v) { ce = Math.max(0, Math.min(118, ce + v)); updateChallengeUI(); }
+
+        function calcShells(numE) {
+            let capacities = [2, 8, 18, 32, 32, 18, 8];
+            let shells = [];
+            let rem = numE;
+            for(let cap of capacities) {
+                if(rem <= 0) break;
+                let take = Math.min(rem, cap);
+                shells.push(take);
+                rem -= take;
+            }
+            return shells;
+        }
+
+        function updateUI() {
+            document.getElementById('pVal').innerText = p;
+            document.getElementById('nVal').innerText = n;
+            document.getElementById('eVal').innerText = e;
+            document.getElementById('pRange').value = p;
+            document.getElementById('nRange').value = n;
+            document.getElementById('eRange').value = e;
+
+            let info = getElementInfo(p);
+            document.getElementById('elemName').innerText = `${info.name} (${info.sym})`;
+            document.getElementById('elemZ').innerText = p;
+            document.getElementById('elemMass').innerText = p + n;
+
+            let charge = p - e;
+            let chargeTxt = charge === 0 ? "เป็นกลาง (0)" : (charge > 0 ? `ไอออนบวก (+${charge})` : `ไอออนลบ (${charge})`);
+            document.getElementById('elemCharge').innerText = chargeTxt;
+
+            let shells = calcShells(e);
+            document.getElementById('elemConfig').innerText = shells.join(', ') || '0';
+
+            drawAtom('atomCanvas', p, n, shells);
+        }
+
+        function updateChallengeUI() {
+            document.getElementById('cPVal').innerText = cp;
+            document.getElementById('cNVal').innerText = cn;
+            document.getElementById('cEVal').innerText = ce;
+            document.getElementById('cPRange').value = cp;
+            document.getElementById('cNRange').value = cn;
+            document.getElementById('cERange').value = ce;
+
+            let target = targetsPool[currentTargetIndex];
+            document.getElementById('targetTitle').innerText = target.title;
+            document.getElementById('targetP').innerText = target.p;
+            document.getElementById('targetN').innerText = target.n;
+            document.getElementById('targetE').innerText = target.e;
+
+            let shells = calcShells(ce);
+            drawAtom('challengeCanvas', cp, cn, shells);
+        }
+
+        function drawAtom(canvasId, pNum, nNum, shells) {
+            const canvas = document.getElementById(canvasId);
+            if(!canvas) return;
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const cx = canvas.width / 2;
+            const cy = canvas.height / 2;
+
+            ctx.beginPath();
+            ctx.arc(cx, cy, 22, 0, Math.PI * 2);
+            ctx.fillStyle = "#c084fc";
+            ctx.fill();
+            ctx.fillStyle = "#fff";
+            ctx.font = "bold 11px sans-serif";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText(`${pNum}P/${nNum}N`, cx, cy);
+
+            let radius = 38;
+            let angleOffset = Date.now() * 0.001;
+
+            shells.forEach((count, idx) => {
+                let r = radius + (idx * 20);
+                ctx.beginPath();
+                ctx.arc(cx, cy, r, 0, Math.PI * 2);
+                ctx.strokeStyle = "rgba(148, 163, 184, 0.3)";
+                ctx.stroke();
+
+                for(let i = 0; i < count; i++) {
+                    let angle = (i * (2 * Math.PI / count)) + angleOffset;
+                    let ex = cx + r * Math.cos(angle);
+                    let ey = cy + r * Math.sin(angle);
+
+                    ctx.beginPath();
+                    ctx.arc(ex, ey, 4.5, 0, Math.PI * 2);
+                    ctx.fillStyle = "#38bdf8";
+                    ctx.fill();
+                }
+            });
+        }
+
+        function renderBonding() {
+            const mol = document.getElementById('moleculeSelect').value;
+            const canvas = document.getElementById('bondCanvas');
+            const ctx = canvas.getContext('2d');
+            const info = document.getElementById('bondInfo');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.font = "bold 16px sans-serif";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+
+            if(mol === "NaCl") {
+                info.innerHTML = "<h3>พันธะไอออนิก (Ionic Bond): NaCl</h3><p>Sodium (Na) ให้ 1 อิเล็กตรอนแก่ Chlorine (Cl) ทำให้เกิดแรงดึงดูดระหว่าง <b>Na<sup>+</sup></b> และ <b>Cl<sup>-</sup></b></p>";
+                ctx.beginPath(); ctx.arc(180, 150, 40, 0, Math.PI*2); ctx.fillStyle = "#f87171"; ctx.fill();
+                ctx.fillStyle = "#fff"; ctx.fillText("Na+", 180, 150);
+                
+                ctx.beginPath(); ctx.arc(290, 150, 6, 0, Math.PI*2); ctx.fillStyle = "#38bdf8"; ctx.fill();
+                ctx.fillStyle = "#38bdf8"; ctx.fillText("e- ➔", 280, 125);
+
+                ctx.beginPath(); ctx.arc(400, 150, 50, 0, Math.PI*2); ctx.fillStyle = "#4ade80"; ctx.fill();
+                ctx.fillStyle = "#000"; ctx.fillText("Cl-", 400, 150);
+            } 
+            else if(mol === "MgO") {
+                info.innerHTML = "<h3>พันธะไอออนิก (Ionic Bond): MgO</h3><p>Magnesium (Mg) ถ่ายโอน 2 เวเลนซ์อิเล็กตรอนให้ Oxygen (O) เกิดเป็นไอออน <b>Mg<sup>2+</sup></b> และ <b>O<sup>2-</sup></b></p>";
+                ctx.beginPath(); ctx.arc(180, 150, 42, 0, Math.PI*2); ctx.fillStyle = "#facc15"; ctx.fill();
+                ctx.fillStyle = "#000"; ctx.fillText("Mg2+", 180, 150);
+                
+                ctx.fillStyle = "#38bdf8"; ctx.fillText("2e- ➔", 280, 125);
+
+                ctx.beginPath(); ctx.arc(400, 150, 48, 0, Math.PI*2); ctx.fillStyle = "#38bdf8"; ctx.fill();
+                ctx.fillStyle = "#000"; ctx.fillText("O2-", 400, 150);
+            }
+            else if(mol === "H2O") {
+                info.innerHTML = "<h3>พันธะโคเวเลนต์ (Covalent Bond): H<sub>2</sub>O</h3><p>Oxygen (O) ใช้อิเล็กตรอนร่วมกับ Hydrogen (H) 2 อะตอม เกิดพันธะเดี่ยว (Single Bonds)</p>";
+                ctx.beginPath(); ctx.arc(300, 150, 50, 0, Math.PI*2); ctx.fillStyle = "#38bdf8"; ctx.fill();
+                ctx.fillStyle = "#fff"; ctx.fillText("O", 300, 150);
+                
+                ctx.beginPath(); ctx.arc(210, 150, 30, 0, Math.PI*2); ctx.fillStyle = "#c084fc"; ctx.fill();
+                ctx.fillStyle = "#fff"; ctx.fillText("H", 210, 150);
+
+                ctx.beginPath(); ctx.arc(390, 150, 30, 0, Math.PI*2); ctx.fillStyle = "#c084fc"; ctx.fill();
+                ctx.fillStyle = "#fff"; ctx.fillText("H", 390, 150);
+            }
+            else if(mol === "CO2") {
+                info.innerHTML = "<h3>พันธะโคเวเลนต์ (Covalent Bond): CO<sub>2</sub></h3><p>Carbon (C) ใช้อิเล็กตรอนร่วมกับ Oxygen (O) ทั้งสองฝั่ง เกิดเป็นพันธะคู่ (Double Bonds: O=C=O)</p>";
+                ctx.beginPath(); ctx.arc(150, 150, 45, 0, Math.PI*2); ctx.fillStyle = "#38bdf8"; ctx.fill();
+                ctx.fillStyle = "#000"; ctx.fillText("O", 150, 150);
+
+                ctx.strokeStyle = "#4ade80"; ctx.lineWidth = 4;
+                ctx.beginPath(); ctx.moveTo(200, 142); ctx.lineTo(250, 142); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(200, 158); ctx.lineTo(250, 158); ctx.stroke();
+
+                ctx.beginPath(); ctx.arc(300, 150, 45, 0, Math.PI*2); ctx.fillStyle = "#c084fc"; ctx.fill();
+                ctx.fillStyle = "#fff"; ctx.fillText("C", 300, 150);
+
+                ctx.beginPath(); ctx.moveTo(350, 142); ctx.lineTo(400, 142); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(350, 158); ctx.lineTo(400, 158); ctx.stroke();
+
+                ctx.beginPath(); ctx.arc(450, 150, 45, 0, Math.PI*2); ctx.fillStyle = "#38bdf8"; ctx.fill();
+                ctx.fillStyle = "#000"; ctx.fillText("O", 450, 150);
+            }
+            else if(mol === "O2") {
+                info.innerHTML = "<h3>พันธะโคเวเลนต์ (Covalent Bond): O<sub>2</sub></h3><p>อะตอมออกซิเจน 2 อะตอม ใช้อิเล็กตรอนร่วมกัน 2 คู่ เกิดพันธะคู่ (Double Bond: O=O)</p>";
+                ctx.beginPath(); ctx.arc(220, 150, 50, 0, Math.PI*2); ctx.fillStyle = "#38bdf8"; ctx.fill();
+                ctx.fillStyle = "#000"; ctx.fillText("O", 220, 150);
+
+                ctx.strokeStyle = "#4ade80"; ctx.lineWidth = 4;
+                ctx.beginPath(); ctx.moveTo(275, 142); ctx.lineTo(325, 142); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(275, 158); ctx.lineTo(325, 158); ctx.stroke();
+
+                ctx.beginPath(); ctx.arc(380, 150, 50, 0, Math.PI*2); ctx.fillStyle = "#38bdf8"; ctx.fill();
+                ctx.fillStyle = "#000"; ctx.fillText("O", 380, 150);
+            }
+        }
+
+        function startChallengeGame() {
+            document.getElementById('challengeStartScreen').style.display = 'none';
+            document.getElementById('challengeGameArea').style.display = 'block';
+            score = 0;
+            document.getElementById('scoreVal').innerText = score;
+            nextTargetQuestion();
+            resetTimer();
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            timeLeft = 45;
+            document.getElementById('timerVal').innerText = timeLeft;
+            gameActive = true;
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timerVal').innerText = timeLeft;
+                if(timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    gameActive = false;
+                    alert(`⏱️ หมดเวลา! สรุปคะแนนการท้าทายของคุณ ${playerName}: ${score} คะแนน`);
+                    saveScoreToLeaderboard(playerName, score);
+                    document.getElementById('challengeStartScreen').style.display = 'block';
+                    document.getElementById('challengeGameArea').style.display = 'none';
+                }
+            }, 1000);
+        }
+
+        function nextTargetQuestion() {
+            let nextIndex;
+            do {
+                nextIndex = Math.floor(Math.random() * targetsPool.length);
+            } while(nextIndex === currentTargetIndex);
+            
+            currentTargetIndex = nextIndex;
+            updateChallengeUI();
+        }
+
+        function checkChallenge() {
+            if(!gameActive) {
+                alert("⏰ หมดเวลาแล้ว กรุณากดเริ่มการท้าทายใหม่ครับ");
+                return;
+            }
+
+            let target = targetsPool[currentTargetIndex];
+            if(cp === target.p && cn === target.n && ce === target.e) {
+                score += 100;
+                document.getElementById('scoreVal').innerText = score;
+                alert(`🎉 ถูกต้อง! คุณสังเคราะห์ ${target.title} สำเร็จ (+100 คะแนน)`);
+                nextTargetQuestion();
+                resetTimer();
+            } else {
+                alert(`❌ ยังไม่ถูกต้อง!
+เป้าหมายคือ โปรตอน:${target.p}, นิวตรอน:${target.n}, อิเล็กตรอน:${target.e}`);
+            }
+        }
+
+        function saveScoreToLeaderboard(name, newScore) {
+            let stored = localStorage.getItem('atomCrafterLeaderboard');
+            let lb = stored ? JSON.parse(stored) : defaultLeaderboard;
+
+            let existing = lb.find(item => item.name.toLowerCase() === name.toLowerCase());
+            if(existing) {
+                if(newScore > existing.score) {
+                    existing.score = newScore;
+                    existing.status = getStatusTitle(newScore);
+                }
+            } else {
+                lb.push({ name: name, score: newScore, status: getStatusTitle(newScore) });
+            }
+
+            lb.sort((a, b) => b.score - a.score);
+            lb = lb.slice(0, 10);
+
+            localStorage.setItem('atomCrafterLeaderboard', JSON.stringify(lb));
+            updateLeaderboardUI();
+        }
+
+        function getStatusTitle(scoreVal) {
+            if(scoreVal >= 500) return "Master Chemist 🏆";
+            if(scoreVal >= 300) return "Senior Researcher 🧪";
+            if(scoreVal >= 100) return "Lab Technician 🔬";
+            return "Junior Apprentice 📖";
+        }
+
+        function updateLeaderboardUI() {
+            let stored = localStorage.getItem('atomCrafterLeaderboard');
+            let lb = stored ? JSON.parse(stored) : defaultLeaderboard;
+
+            let html = "";
+            lb.forEach((entry, idx) => {
+                let rankBadge = idx === 0 ? "🥇 1" : (idx === 1 ? "🥈 2" : (idx === 2 ? "🥉 3" : (idx + 1)));
+                html += `<tr>
+                    <td><strong>${rankBadge}</strong></td>
+                    <td style="color:${entry.name === playerName ? 'var(--accent-green)' : 'white'}">
+                        ${entry.name} ${entry.name === playerName ? '(คุณ)' : ''}
+                    </td>
+                    <td style="color:var(--accent-yellow); font-weight:bold;">${entry.score}</td>
+                    <td>${entry.status || getStatusTitle(entry.score)}</td>
+                </tr>`;
+            });
+
+            document.getElementById('lbTable').innerHTML = html;
+        }
+
+        setInterval(() => {
+            let activeTab = document.querySelector('.tab-content.active');
+            if(activeTab) {
+                if(activeTab.id === 'workbench') updateUI();
+                if(activeTab.id === 'challenge') updateChallengeUI();
+            }
+        }, 50);
+
+        updateUI();
+    </script>
 </body>
 </html>
