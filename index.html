@@ -12,6 +12,7 @@
             --accent-green: #4ade80;
             --accent-purple: #c084fc;
             --accent-red: #f87171;
+            --accent-yellow: #facc15;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
         }
@@ -50,6 +51,8 @@
             display: flex;
             gap: 10px;
             margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
         .tab-btn {
@@ -84,7 +87,6 @@
             display: block;
         }
 
-        /* Workbench Layout */
         .workbench-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -173,7 +175,6 @@
             margin-bottom: 5px;
         }
 
-        /* Leaderboard Table */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -195,10 +196,9 @@
             background-color: rgba(51, 65, 85, 0.4);
         }
 
-        /* Challenge Mode Styles */
         .challenge-box {
             text-align: center;
-            padding: 20px;
+            padding: 10px;
         }
 
         .target-card {
@@ -208,7 +208,7 @@
             border-radius: 12px;
             margin-bottom: 20px;
             display: inline-block;
-            min-width: 250px;
+            min-width: 280px;
         }
 
         .submit-btn {
@@ -236,10 +236,10 @@
     <p class="subtitle">เกมเรียนรู้ตารางธาตุ โครงสร้างอะตอม และพันธะเคมี (118 ธาตุ)</p>
 
     <div class="tab-buttons">
-        <button class="tab-btn active" onclick="switchTab('workbench')">Atomic Workbench</button>
-        <button class="tab-btn" onclick="switchTab('bonding')">Bonding Lab</button>
-        <button class="tab-btn" onclick="switchTab('challenge')">Target Challenge</button>
-        <button class="tab-btn" onclick="switchTab('leaderboard')">Leaderboard</button>
+        <button class="tab-btn active" onclick="switchTab('workbench', event)">Atomic Workbench</button>
+        <button class="tab-btn" onclick="switchTab('bonding', event)">Bonding Lab</button>
+        <button class="tab-btn" onclick="switchTab('challenge', event)">Target Challenge</button>
+        <button class="tab-btn" onclick="switchTab('leaderboard', event)">Leaderboard</button>
     </div>
 
     <!-- 1. ATOMIC WORKBENCH -->
@@ -316,7 +316,6 @@
             <canvas id="bondCanvas" width="600" height="300"></canvas>
         </div>
         <div class="info-card" id="bondInfo" style="margin-top: 15px;">
-            <!-- Bonding info updated by JS -->
         </div>
     </div>
 
@@ -324,19 +323,58 @@
     <div id="challenge" class="tab-content">
         <div class="challenge-box">
             <h2>Target Challenge Mode</h2>
-            <p style="color: var(--text-muted); margin-bottom: 20px;">สร้างอะตอมตามเป้าหมายที่กำหนดเพื่อสะสมคะแนน!</p>
+            <p style="color: var(--text-muted); margin-bottom: 15px;">สร้างอนุภาคตามเป้าหมายที่กำหนดเพื่อสะสมคะแนน!</p>
             
             <div class="target-card">
                 <h3>โจทย์เป้าหมาย:</h3>
-                <h1 id="targetElem" style="color: var(--accent-green); font-size: 2.5rem; margin: 10px 0;">Carbon-12</h1>
-                <p>โปรตอน: <span id="targetP">6</span> | นิวตรอน: <span id="targetN">6</span> | อิเล็กตรอน: <span id="targetE">6</span></p>
+                <h1 id="targetTitle" style="color: var(--accent-green); font-size: 2.2rem; margin: 10px 0;">Carbon-12</h1>
+                <p>โปรตอน: <span id="targetP" style="color:var(--accent-red); font-weight:bold;">6</span> | นิวตรอน: <span id="targetN" style="color:var(--accent-purple); font-weight:bold;">6</span> | อิเล็กตรอน: <span id="targetE" style="color:var(--accent-blue); font-weight:bold;">6</span></p>
             </div>
 
-            <div>
-                <h3>คะแนนปัจจุบัน: <span id="scoreVal" style="color: var(--accent-blue);">0</span></h3>
-            </div>
+            <div class="workbench-grid" style="text-align: left;">
+                <div class="canvas-container">
+                    <canvas id="challengeCanvas" width="300" height="300"></canvas>
+                </div>
+                <div class="controls">
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span>โปรตอน (Protons): <span id="cPVal" style="color: var(--accent-red);">1</span></span>
+                        </div>
+                        <div class="btn-row">
+                            <button onclick="adjCP(-1)">-</button>
+                            <input type="range" id="cPRange" min="1" max="118" value="1" oninput="setCP(this.value)">
+                            <button onclick="adjCP(1)">+</button>
+                        </div>
+                    </div>
 
-            <button class="submit-btn" onclick="checkChallenge()">ตรวจสอบการสร้าง</button>
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span>นิวตรอน (Neutrons): <span id="cNVal" style="color: var(--accent-purple);">0</span></span>
+                        </div>
+                        <div class="btn-row">
+                            <button onclick="adjCN(-1)">-</button>
+                            <input type="range" id="cNRange" min="0" max="180" value="0" oninput="setCN(this.value)">
+                            <button onclick="adjCN(1)">+</button>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span>อิเล็กตรอน (Electrons): <span id="cEVal" style="color: var(--accent-blue);">1</span></span>
+                        </div>
+                        <div class="btn-row">
+                            <button onclick="adjCE(-1)">-</button>
+                            <input type="range" id="cERange" min="0" max="118" value="1" oninput="setCE(this.value)">
+                            <button onclick="adjCE(1)">+</button>
+                        </div>
+                    </div>
+
+                    <div style="text-align: center;">
+                        <h3 style="margin-top: 10px;">คะแนนปัจจุบัน: <span id="scoreVal" style="color: var(--accent-yellow); font-size: 1.5rem;">0</span></h3>
+                        <button class="submit-btn" onclick="checkChallenge()">ส่งคำตอบสังเคราะห์</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -363,7 +401,6 @@
     </div>
 
     <script>
-        // 118 Elements Data
         const elementsData = [
             {z:1, sym:"H", name:"Hydrogen", mass:1}, {z:2, sym:"He", name:"Helium", mass:4},
             {z:3, sym:"Li", name:"Lithium", mass:7}, {z:4, sym:"Be", name:"Beryllium", mass:9},
@@ -380,8 +417,26 @@
             {z:92, sym:"U", name:"Uranium", mass:238}, {z:118, sym:"Og", name:"Oganesson", mass:294}
         ];
 
+        // Workbench state
         let p = 1, n = 0, e = 1;
+        // Challenge state
+        let cp = 1, cn = 0, ce = 1;
         let score = 0;
+
+        // Target Pool
+        const targetsPool = [
+            { title: "Hydrogen-1", p: 1, n: 0, e: 1 },
+            { title: "Helium-4", p: 2, n: 2, e: 2 },
+            { title: "Lithium-7", p: 3, n: 4, e: 3 },
+            { title: "Carbon-12", p: 6, n: 6, e: 6 },
+            { title: "Oxygen-16", p: 8, n: 8, e: 8 },
+            { title: "Sodium Ion (Na+)", p: 11, n: 12, e: 10 },
+            { title: "Oxide Ion (O2-)", p: 8, n: 8, e: 10 },
+            { title: "Magnesium Ion (Mg2+)", p: 12, n: 12, e: 10 },
+            { title: "Chlorine-35", p: 17, n: 18, e: 17 },
+            { title: "Neon-20", p: 10, n: 10, e: 10 }
+        ];
+        let currentTargetIndex = 3; // Carbon-12 default
 
         function getElementInfo(protons) {
             let found = elementsData.find(item => item.z === parseInt(protons));
@@ -389,21 +444,28 @@
             return { z: protons, sym: "E" + protons, name: "Element " + protons, mass: protons * 2 };
         }
 
-        function switchTab(tabId) {
+        function switchTab(tabId, evt) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
-            event.currentTarget.classList.add('active');
+            if(evt) evt.currentTarget.classList.add('active');
             if(tabId === 'bonding') renderBonding();
+            if(tabId === 'challenge') updateChallengeUI();
         }
 
         function setP(v) { p = parseInt(v); updateUI(); }
         function setN(v) { n = parseInt(v); updateUI(); }
         function setE(v) { e = parseInt(v); updateUI(); }
-
         function adjP(v) { p = Math.max(1, Math.min(118, p + v)); updateUI(); }
         function adjN(v) { n = Math.max(0, Math.min(180, n + v)); updateUI(); }
         function adjE(v) { e = Math.max(0, Math.min(118, e + v)); updateUI(); }
+
+        function setCP(v) { cp = parseInt(v); updateChallengeUI(); }
+        function setCN(v) { cn = parseInt(v); updateChallengeUI(); }
+        function setCE(v) { ce = parseInt(v); updateChallengeUI(); }
+        function adjCP(v) { cp = Math.max(1, Math.min(118, cp + v)); updateChallengeUI(); }
+        function adjCN(v) { cn = Math.max(0, Math.min(180, cn + v)); updateChallengeUI(); }
+        function adjCE(v) { ce = Math.max(0, Math.min(118, ce + v)); updateChallengeUI(); }
 
         function calcShells(numE) {
             let capacities = [2, 8, 18, 32, 32, 18, 8];
@@ -438,34 +500,51 @@
             let shells = calcShells(e);
             document.getElementById('elemConfig').innerText = shells.join(', ') || '0';
 
-            drawAtom(shells);
+            drawAtom('atomCanvas', p, n, shells);
         }
 
-        function drawAtom(shells) {
-            const canvas = document.getElementById('atomCanvas');
+        function updateChallengeUI() {
+            document.getElementById('cPVal').innerText = cp;
+            document.getElementById('cNVal').innerText = cn;
+            document.getElementById('cEVal').innerText = ce;
+            document.getElementById('cPRange').value = cp;
+            document.getElementById('cNRange').value = cn;
+            document.getElementById('cERange').value = ce;
+
+            let target = targetsPool[currentTargetIndex];
+            document.getElementById('targetTitle').innerText = target.title;
+            document.getElementById('targetP').innerText = target.p;
+            document.getElementById('targetN').innerText = target.n;
+            document.getElementById('targetE').innerText = target.e;
+
+            let shells = calcShells(ce);
+            drawAtom('challengeCanvas', cp, cn, shells);
+        }
+
+        function drawAtom(canvasId, pNum, nNum, shells) {
+            const canvas = document.getElementById(canvasId);
+            if(!canvas) return;
             const ctx = canvas.getContext('2d');
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             const cx = canvas.width / 2;
             const cy = canvas.height / 2;
 
-            // Draw Nucleus
             ctx.beginPath();
-            ctx.arc(cx, cy, 20, 0, Math.PI * 2);
+            ctx.arc(cx, cy, 22, 0, Math.PI * 2);
             ctx.fillStyle = "#c084fc";
             ctx.fill();
             ctx.fillStyle = "#fff";
-            ctx.font = "bold 12px sans-serif";
+            ctx.font = "bold 11px sans-serif";
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
-            ctx.fillText(`${p}P / ${n}N`, cx, cy);
+            ctx.fillText(`${pNum}P/${nNum}N`, cx, cy);
 
-            // Draw Shells & Electrons
-            let radius = 40;
+            let radius = 38;
             let angleOffset = Date.now() * 0.001;
 
             shells.forEach((count, idx) => {
-                let r = radius + (idx * 22);
+                let r = radius + (idx * 20);
                 ctx.beginPath();
                 ctx.arc(cx, cy, r, 0, Math.PI * 2);
                 ctx.strokeStyle = "rgba(148, 163, 184, 0.3)";
@@ -477,59 +556,129 @@
                     let ey = cy + r * Math.sin(angle);
 
                     ctx.beginPath();
-                    ctx.arc(ex, ey, 5, 0, Math.PI * 2);
+                    ctx.arc(ex, ey, 4.5, 0, Math.PI * 2);
                     ctx.fillStyle = "#38bdf8";
                     ctx.fill();
                 }
             });
         }
 
-        // Bonding Canvas
         function renderBonding() {
             const mol = document.getElementById('moleculeSelect').value;
             const canvas = document.getElementById('bondCanvas');
             const ctx = canvas.getContext('2d');
             const info = document.getElementById('bondInfo');
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.font = "bold 16px sans-serif";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
 
             if(mol === "NaCl") {
-                info.innerHTML = "<h3>พันธะไอออนิก (Ionic Bond): NaCl</h3><p>Sodium (Na) สูญเสีย 1 อิเล็กตรอนให้ Chlorine (Cl) เกิดแรงดึงดูดระหว่าง Na<sup>+</sup> และ Cl<sup>-</sup></p>";
-                // Draw Na+ and Cl-
-                ctx.beginPath(); ctx.arc(200, 150, 40, 0, Math.PI*2); ctx.fillStyle = "#f87171"; ctx.fill();
-                ctx.fillStyle = "#fff"; ctx.fillText("Na+", 200, 150);
+                info.innerHTML = "<h3>พันธะไอออนิก (Ionic Bond): NaCl</h3><p>Sodium (Na) ให้ 1 อิเล็กตรอนแก่ Chlorine (Cl) ทำให้เกิดแรงดึงดูดระหว่าง <b>Na<sup>+</sup></b> และ <b>Cl<sup>-</sup></b></p>";
+                // Na+
+                ctx.beginPath(); ctx.arc(180, 150, 40, 0, Math.PI*2); ctx.fillStyle = "#f87171"; ctx.fill();
+                ctx.fillStyle = "#fff"; ctx.fillText("Na+", 180, 150);
                 
+                // Transfer Arrow
+                ctx.beginPath(); ctx.arc(290, 150, 6, 0, Math.PI*2); ctx.fillStyle = "#38bdf8"; ctx.fill();
+                ctx.fillStyle = "#38bdf8"; ctx.fillText("e- ➔", 280, 125);
+
+                // Cl-
                 ctx.beginPath(); ctx.arc(400, 150, 50, 0, Math.PI*2); ctx.fillStyle = "#4ade80"; ctx.fill();
                 ctx.fillStyle = "#000"; ctx.fillText("Cl-", 400, 150);
-            } else if(mol === "H2O") {
-                info.innerHTML = "<h3>พันธะโคเวเลนต์ (Covalent Bond): H<sub>2</sub>O</h3><p>Oxygen (O) ใช้อิเล็กตรอนร่วมกับ Hydrogen (H) จำนวน 2 อะตอม</p>";
+            } 
+            else if(mol === "MgO") {
+                info.innerHTML = "<h3>พันธะไอออนิก (Ionic Bond): MgO</h3><p>Magnesium (Mg) ถ่ายโอน 2 เวเลนซ์อิเล็กตรอนให้ Oxygen (O) เกิดเป็นไอออน <b>Mg<sup>2+</sup></b> และ <b>O<sup>2-</sup></b></p>";
+                // Mg2+
+                ctx.beginPath(); ctx.arc(180, 150, 42, 0, Math.PI*2); ctx.fillStyle = "#facc15"; ctx.fill();
+                ctx.fillStyle = "#000"; ctx.fillText("Mg2+", 180, 150);
+                
+                // 2 e- Transfer
+                ctx.fillStyle = "#38bdf8"; ctx.fillText("2e- ➔", 280, 125);
+
+                // O2-
+                ctx.beginPath(); ctx.arc(400, 150, 48, 0, Math.PI*2); ctx.fillStyle = "#38bdf8"; ctx.fill();
+                ctx.fillStyle = "#000"; ctx.fillText("O2-", 400, 150);
+            }
+            else if(mol === "H2O") {
+                info.innerHTML = "<h3>พันธะโคเวเลนต์ (Covalent Bond): H<sub>2</sub>O</h3><p>Oxygen (O) ใช้อิเล็กตรอนร่วมกับ Hydrogen (H) 2 อะตอม เกิดพันธะเดี่ยว (Single Bonds)</p>";
+                // O
                 ctx.beginPath(); ctx.arc(300, 150, 50, 0, Math.PI*2); ctx.fillStyle = "#38bdf8"; ctx.fill();
                 ctx.fillStyle = "#fff"; ctx.fillText("O", 300, 150);
                 
+                // H1 & H2
                 ctx.beginPath(); ctx.arc(210, 150, 30, 0, Math.PI*2); ctx.fillStyle = "#c084fc"; ctx.fill();
                 ctx.fillStyle = "#fff"; ctx.fillText("H", 210, 150);
 
                 ctx.beginPath(); ctx.arc(390, 150, 30, 0, Math.PI*2); ctx.fillStyle = "#c084fc"; ctx.fill();
                 ctx.fillStyle = "#fff"; ctx.fillText("H", 390, 150);
-            } else {
-                info.innerHTML = "<h3>พันธะเคมี</h3><p>จำลองโครงสร้างโมเลกุลและการใช้อิเล็กตรอนร่วมกัน</p>";
+            }
+            else if(mol === "CO2") {
+                info.innerHTML = "<h3>พันธะโคเวเลนต์ (Covalent Bond): CO<sub>2</sub></h3><p>Carbon (C) ใช้อิเล็กตรอนร่วมกับ Oxygen (O) ทั้งสองฝั่ง เกิดเป็นพันธะคู่ (Double Bonds: O=C=O)</p>";
+                // Left O
+                ctx.beginPath(); ctx.arc(150, 150, 45, 0, Math.PI*2); ctx.fillStyle = "#38bdf8"; ctx.fill();
+                ctx.fillStyle = "#000"; ctx.fillText("O", 150, 150);
+
+                // Double bond lines left
+                ctx.strokeStyle = "#4ade80"; ctx.lineWidth = 4;
+                ctx.beginPath(); ctx.moveTo(200, 142); ctx.lineTo(250, 142); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(200, 158); ctx.lineTo(250, 158); ctx.stroke();
+
+                // Center C
+                ctx.beginPath(); ctx.arc(300, 150, 45, 0, Math.PI*2); ctx.fillStyle = "#c084fc"; ctx.fill();
+                ctx.fillStyle = "#fff"; ctx.fillText("C", 300, 150);
+
+                // Double bond lines right
+                ctx.beginPath(); ctx.moveTo(350, 142); ctx.lineTo(400, 142); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(350, 158); ctx.lineTo(400, 158); ctx.stroke();
+
+                // Right O
+                ctx.beginPath(); ctx.arc(450, 150, 45, 0, Math.PI*2); ctx.fillStyle = "#38bdf8"; ctx.fill();
+                ctx.fillStyle = "#000"; ctx.fillText("O", 450, 150);
+            }
+            else if(mol === "O2") {
+                info.innerHTML = "<h3>พันธะโคเวเลนต์ (Covalent Bond): O<sub>2</sub></h3><p>อะตอมออกซิเจน 2 อะตอม ใช้อิเล็กตรอนร่วมกัน 2 คู่ เกิดพันธะคู่ (Double Bond: O=O)</p>";
+                // O1
+                ctx.beginPath(); ctx.arc(220, 150, 50, 0, Math.PI*2); ctx.fillStyle = "#38bdf8"; ctx.fill();
+                ctx.fillStyle = "#000"; ctx.fillText("O", 220, 150);
+
+                // Double bond lines
+                ctx.strokeStyle = "#4ade80"; ctx.lineWidth = 4;
+                ctx.beginPath(); ctx.moveTo(275, 142); ctx.lineTo(325, 142); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(275, 158); ctx.lineTo(325, 158); ctx.stroke();
+
+                // O2
+                ctx.beginPath(); ctx.arc(380, 150, 50, 0, Math.PI*2); ctx.fillStyle = "#38bdf8"; ctx.fill();
+                ctx.fillStyle = "#000"; ctx.fillText("O", 380, 150);
             }
         }
 
         function checkChallenge() {
-            if(p === 6 && n === 6 && e === 6) {
+            let target = targetsPool[currentTargetIndex];
+            if(cp === target.p && cn === target.n && ce === target.e) {
                 score += 100;
                 document.getElementById('scoreVal').innerText = score;
-                alert("ถูกต้อง! คุณสร้าง Carbon-12 สำเร็จ (+100 คะแนน)");
+                alert(`🎉 ถูกต้อง! คุณสังเคราะห์ ${target.title} สำเร็จ (+100 คะแนน)`);
+                
+                // Randomize Next Target
+                let nextIndex;
+                do {
+                    nextIndex = Math.floor(Math.random() * targetsPool.length);
+                } while(nextIndex === currentTargetIndex);
+                
+                currentTargetIndex = nextIndex;
+                updateChallengeUI();
             } else {
-                alert("ยังไม่ถูกต้อง ลองปรับจำนวน โปรตอน/นิวตรอน/อิเล็กตรอน อีกครั้ง!");
+                alert(`❌ ยังไม่ถูกต้อง!\nเป้าหมายคือ โปรตอน:${target.p}, นิวตรอน:${target.n}, อิเล็กตรอน:${target.e}`);
             }
         }
 
-        // Animation Loop
+        // Loop animation for active canvas
         setInterval(() => {
-            let activeTab = document.querySelector('.tab-content.active').id;
-            if(activeTab === 'workbench') {
-                updateUI();
+            let activeTab = document.querySelector('.tab-content.active');
+            if(activeTab) {
+                if(activeTab.id === 'workbench') updateUI();
+                if(activeTab.id === 'challenge') updateChallengeUI();
             }
         }, 50);
 
