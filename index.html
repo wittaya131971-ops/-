@@ -921,3 +921,134 @@
     </script>
 </body>
 </html>
+const challenges = [
+  // หมวดสัญลักษณ์ธาตุ
+  { question: "สัญลักษณ์ของ โซเดียม คืออะไร?", choices: ["Na", "So", "N", "Sd"], answer: "Na" },
+  { question: "สัญลักษณ์ของ โพแทสเซียม คืออะไร?", choices: ["K", "P", "Po", "Pt"], answer: "K" },
+  
+  // หมวดอนุภาคและเลขอะตอม
+  { question: "ธาตุที่มีเลขอะตอม 6 คือธาตุใด?", choices: ["Carbon", "Oxygen", "Nitrogen", "Helium"], answer: "Carbon" },
+  { question: "นิวตรอนของ Carbon-14 (เลขอะตอม = 6) มีกี่ตัว?", choices: ["6", "8", "14", "12"], answer: "8" },
+  
+  // หมวดการจัดเรียงอิเล็กตรอน & ตารางธาตุ
+  { question: "การจัดเรียงอิเล็กตรอนของ Chlorine (Z=17) คือข้อใด?", choices: ["2, 8, 7", "2, 8, 8", "2, 7", "2, 8, 6, 1"], answer: "2, 8, 7" },
+  { question: "แก๊สเฉื่อย (Noble Gases) จัดอยู่ในหมู่ใดของตารางธาตุ?", choices: ["หมู่ 1A", "หมู่ 7A", "หมู่ 8A", "ธาตุแทรนซิชัน"], answer: "หมู่ 8A" }
+];
+<!-- ปุ่มเลือกระดับความยาก -->
+<div id="difficulty-selector">
+  <p>เลือกความยาก:</p>
+  <button onclick="startGame('easy')">ง่าย (15 วินาที)</button>
+  <button onclick="startGame('medium')">ปานกลาง (10 วินาที)</button>
+  <button onclick="startGame('hard')">ยาก (5 วินาที)</button>
+</div>
+
+<!-- หน้าเล่นเกม -->
+<div id="game-box" style="display: none;">
+  <div id="timer-display" style="font-size: 20px; color: red; font-weight: bold;"></div>
+  <h2 id="question"></h2>
+  <div id="choices"></div>
+</div>
+// คลังคำถามแยกตามระดับความยาก
+const questionBank = {
+  easy: [
+    { question: "สัญลักษณ์เคมีของ โซเดียม คืออะไร?", choices: ["Na", "So", "N", "Sd"], answer: "Na" },
+    { question: "สัญลักษณ์เคมีของ ทองคำ คืออะไร?", choices: ["Au", "Ag", "Fe", "Go"], answer: "Au" }
+  ],
+  medium: [
+    { question: "ธาตุที่มีเลขอะตอม 6 คือธาตุใด?", choices: ["Carbon", "Oxygen", "Nitrogen", "Helium"], answer: "Carbon" },
+    { question: "นิวตรอนของ Carbon-14 (Z = 6) มีกี่ตัว?", choices: ["8", "6", "14", "12"], answer: "8" }
+  ],
+  hard: [
+    { question: "การจัดเรียงอิเล็กตรอนของ Chlorine (Z=17) คือข้อใด?", choices: ["2, 8, 7", "2, 8, 8", "2, 7", "2, 8, 6, 1"], answer: "2, 8, 7" },
+    { question: "Potassium (Z=19) มีการจัดเรียงอิเล็กตรอนแบบใด?", choices: ["2, 8, 8, 1", "2, 8, 9", "2, 8, 7, 2", "2, 8, 8"], answer: "2, 8, 8, 1" }
+  ]
+};
+
+// ตั้งเวลาต่อข้อตามระดับความยาก (วินาที)
+const timeLimits = {
+  easy: 15,
+  medium: 10,
+  hard: 5
+};
+
+let currentQuestions = [];
+let currentQuestionIndex = 0;
+let timer = null;
+let timeLeft = 0;
+let selectedDifficulty = 'easy';
+
+// ฟังก์ชันเริ่มเกมเมื่อกดเลือกความยาก
+function startGame(difficulty) {
+  selectedDifficulty = difficulty;
+  currentQuestions = [...questionBank[difficulty]];
+  currentQuestions.sort(() => Math.random() - 0.5); // สุ่มลำดับคำถาม
+  currentQuestionIndex = 0;
+
+  document.getElementById('difficulty-selector').style.display = 'none';
+  document.getElementById('game-box').style.display = 'block';
+
+  showQuestion();
+}
+
+// ฟังก์ชันแสดงโจทย์และเริ่มนับถอยหลัง
+function showQuestion() {
+  if (currentQuestionIndex >= currentQuestions.length) {
+    alert("จบเกม! คุณทำ Challenge ครบแล้ว");
+    location.reload(); // รีโหลดเพื่อเล่นใหม่
+    return;
+  }
+
+  const q = currentQuestions[currentQuestionIndex];
+  document.getElementById('question').innerText = q.question;
+
+  // สร้างปุ่มตัวเลือก
+  const choicesDiv = document.getElementById('choices');
+  choicesDiv.innerHTML = '';
+  q.choices.forEach(choice => {
+    const btn = document.createElement('button');
+    btn.innerText = choice;
+    btn.onclick = () => checkAnswer(choice);
+    choicesDiv.appendChild(btn);
+  });
+
+  // เริ่มจับเวลา
+  startTimer(timeLimits[selectedDifficulty]);
+}
+
+// ระบบนับถอยหลัง
+function startTimer(seconds) {
+  clearInterval(timer); // ล้างเวลาเก่าก่อนเริ่มใหม่
+  timeLeft = seconds;
+  updateTimerDisplay();
+
+  timer = setInterval(() => {
+    timeLeft--;
+    updateTimerDisplay();
+
+    if (timeLeft <= 0) {
+      clearInterval(timer);
+      alert("หมดเวลา! ข้ามไปข้อถัดไป");
+      currentQuestionIndex++;
+      showQuestion();
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  document.getElementById('timer-display').innerText = `⏱️ เวลาเหลือ: ${timeLeft} วินาที`;
+}
+
+// ตรวจคำตอบ
+function checkAnswer(userAnswer) {
+  clearInterval(timer); // หยุดเวลาเมื่อกดตอบ
+  const correctAnswer = currentQuestions[currentQuestionIndex].answer;
+
+  if (userAnswer === correctAnswer) {
+    alert("ถูกต้อง!");
+  } else {
+    alert(`ผิด! คำตอบที่ถูกต้องคือ ${correctAnswer}`);
+  }
+
+  currentQuestionIndex++;
+  showQuestion();
+}
